@@ -22,4 +22,8 @@ public class Tag {
     @JsonIgnore
     @ManyToMany(mappedBy = "tags",cascade = CascadeType.DETACH)
     private List<Article> articles;
+
+    @ManyToOne
+    @JoinColumn(name="typeId",referencedColumnName = "id")
+    private Type type;
 }

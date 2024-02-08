@@ -8,7 +8,6 @@ import io.smartir.smartir.website.repository.TagRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,7 +32,7 @@ public class ArticleService {
         this.tagRepository = tagRepository;
     }
 
-    public String addArticle(MultipartFile imageFile, String title, MultipartFile bannerImageFile, List<ArticleContentsModel> articleContentsModel, List<Integer> tagIDs) throws Exception {
+    public String addArticle(MultipartFile imageFile, String title, MultipartFile bannerImageFile, List<ArticleContentsModel> articleContentsModel, List<Integer> tagIDs,String summary) throws Exception {
        Optional<Article> articleCheck=articleRepository.findByTitleContainsAllIgnoreCase(title);
        if (articleCheck.isEmpty()){
            Path imagePath=fileService.moveImgFile(imageFile);
@@ -44,6 +43,7 @@ public class ArticleService {
            article.setBannerImage(bannerImagePath.toString());
            article.setTitle(title);
            article.setContents(articleContentsModel);
+           article.setSummary(summary);
            article.setTags(tags);
            articleRepository.save(article);
            return "Article added";
@@ -51,12 +51,50 @@ public class ArticleService {
            return "This article already exist";
     }
 
+    public String updateArticle(int id, MultipartFile imageFile, String title, MultipartFile bannerImageFile,
+                                List<ArticleContentsModel> articleContentsModel, List<Integer> tagIDs, String summary) throws Exception {
+        Optional<Article> oldArticleOptional = articleRepository.findById(id);
+
+        if (oldArticleOptional.isPresent()) {
+            Article oldArticle = oldArticleOptional.get();
+            Optional<Article> articleCheck=articleRepository.findByTitleContainsAllIgnoreCase(title);
+            // Check if the new title is unique if changed
+            if (articleCheck.isPresent()&&articleCheck.get().getId()!=id) {
+                return "Another article with the same title exists. Update failed.";
+            }
+
+            if (imageFile != null) {
+                Path imagePath = fileService.moveImgFile(imageFile);
+                oldArticle.setImage(imagePath.toString());
+            }
+            if (bannerImageFile != null) {
+                Path bannerImagePath = fileService.moveBannerImageFile(bannerImageFile);
+                oldArticle.setBannerImage(bannerImagePath.toString());
+            }
+
+            // Set other attributes
+            oldArticle.setTitle(title);
+            oldArticle.setContents(articleContentsModel);
+            oldArticle.setSummary(summary);
+
+            // Set tags
+            List<Tag> tags = getTags(tagIDs);
+            oldArticle.setTags(tags);
+
+            articleRepository.save(oldArticle);
+            return "Article updated successfully.";
+        } else {
+            return "Article with id " + id + " not found.";
+        }
+    }
+
+
 
 
     public Page<Article> getArticles(Collection<Integer> tagID, String q, Pageable pageable) {
         List<Article> articles = articleRepository.findAll();
         List<Article> articleResults = new ArrayList<>();
-        List<Article> filteredArticles = new ArrayList<>();
+        List<Article> filteredArticles;
 
         for (Article article : articles) {
             Article newArticle = new Article();
@@ -71,16 +109,16 @@ public class ArticleService {
             }
         }
 
-        if (tagID.isEmpty() && q.isEmpty()) {
-            return new PageImpl<>(articles, pageable, articles.size());
-        } else if (!tagID.isEmpty() && !q.isEmpty()) {
+        if (!q.isEmpty()) {
             Predicate<Article> containsName = article ->
                     article.getTitle().toLowerCase().contains(q.toLowerCase());
+            Predicate<Article> containsSummary = article ->
+                    article.getSummary() != null && article.getSummary().toLowerCase().contains(q.toLowerCase());
             filteredArticles = articleResults.stream()
-                    .filter(containsName)
+                    .filter(containsName.or(containsSummary))
                     .collect(Collectors.toList());
             return new PageImpl<>(filteredArticles, pageable, filteredArticles.size());
-        } else if (!tagID.isEmpty() && q.isEmpty()) {
+        } else if (!tagID.isEmpty()) {
             return new PageImpl<>(articleResults, pageable, articleResults.size());
         } else {
             return new PageImpl<>(articles, pageable, articles.size());
@@ -88,6 +126,15 @@ public class ArticleService {
     }
 
 
+    public String deleteArticle(int id){
+        Optional<Article> article= articleRepository.findById(id);
+        if (article.isPresent()){
+            articleRepository.deleteById(id);
+            return "Article Deleted";
+        }else {
+            return "Article not found";
+        }
+    }
 
     private List<Tag> getTags(List<Integer> tagIds) throws Exception {
         List<Tag> existingTags = tagRepository.findByIdIn(tagIds);

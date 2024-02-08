@@ -1,7 +1,6 @@
 package io.smartir.smartir.website.repository;
 
 
-import io.smartir.smartir.website.entity.Article;
 import io.smartir.smartir.website.entity.Tag;
 import org.springframework.data.jpa.repository.JpaRepository;
 

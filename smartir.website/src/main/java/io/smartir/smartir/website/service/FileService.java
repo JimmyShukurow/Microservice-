@@ -5,17 +5,12 @@ import io.smartir.smartir.website.config.BeanNames;
 import io.smartir.smartir.website.exceptions.UnsupportedImageTypeException;
 import io.smartir.smartir.website.utils.FileUtil;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Optional;
 
@@ -50,6 +45,7 @@ public class FileService {
                 .orElseThrow(UnsupportedImageTypeException::new);
         var fileName = String.format("%s_%s.%s", fileExt, String.valueOf(System.currentTimeMillis()), fileExt);
         var uploadedFileLocation = uploadImagePath.resolve(fileName.substring(0,17)+"/"+fileName);
+        System.out.println("asdasd:"+uploadedFileLocation);
         File uploadFile = new File("Image/"+fileName.substring(0,17)+"/");
         uploadFile.mkdir();
         multipartFile.transferTo(uploadedFileLocation);

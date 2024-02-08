@@ -20,6 +20,7 @@ public class Article {
     String bannerImage;
     String title;
     String image;
+    String summary;
 
     @ElementCollection
     List<ArticleContentsModel> contents;
