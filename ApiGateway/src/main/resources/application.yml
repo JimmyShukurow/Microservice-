@@ -1,0 +1,8 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: Website-Route
+          uri: http://localhost:8081
+          predicates:
+            - Path=/article/**, /tag/**
