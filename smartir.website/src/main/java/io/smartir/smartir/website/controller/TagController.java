@@ -6,7 +6,6 @@ import io.smartir.smartir.website.service.TagService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-@CrossOrigin
 @RestController
 @RequestMapping("tag")
 public class TagController {
@@ -26,8 +25,6 @@ public class TagController {
     public List<Tag> getTags() {
         return tagService.getTags();
     }
-
-
 }
 
 

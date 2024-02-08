@@ -5,4 +5,4 @@ spring:
         - id: Website-Route
           uri: http://localhost:8081
           predicates:
-            - Path=/article/**, /tag/**
+            - Path=/article/**, /tag/**, /type/**
