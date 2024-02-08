@@ -1,3 +1,3 @@
-
 INSERT INTO type (id,name) VALUES
-(1, 'solution'), (2,'industry');
+(1, 'solution'), (2,'industry')
+ON CONFLICT DO NOTHING;
