@@ -52,7 +52,7 @@ public class ArticleController {
         return ResponseEntity.ok(result);
     }
 
-    @DeleteMapping(value = "deleteArticle/{articleId}")
+    @DeleteMapping(value = "delete/{articleId}")
     public String deleteArticle(@PathVariable int articleId){
        return articleService.deleteArticle(articleId);
     }

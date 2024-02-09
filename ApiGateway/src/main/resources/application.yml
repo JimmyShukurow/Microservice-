@@ -5,4 +5,10 @@ spring:
         - id: Website-Route
           uri: http://localhost:8081
           predicates:
-            - Path=/article/**, /tag/**, /type/**
+            - Path=/article/**, /tag/**, /type/**, /BannerImage/**,/Image/**
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"

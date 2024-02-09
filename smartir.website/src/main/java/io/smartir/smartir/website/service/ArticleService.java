@@ -105,6 +105,7 @@ public class ArticleService {
                 newArticle.setBannerImage(article.getBannerImage());
                 newArticle.setTags(article.getTags());
                 newArticle.setContents(article.getContents());
+                newArticle.setSummary(article.getSummary());
                 articleResults.add(newArticle);
             }
         }
