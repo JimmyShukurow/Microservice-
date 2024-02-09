@@ -2,10 +2,14 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: Website-Route
+        - id: website-service
           uri: http://localhost:8081
           predicates:
             - Path=/article/**, /tag/**, /type/**, /BannerImage/**,/Image/**
+        - id: auth-service
+          uri: http://localhost:8082
+          predicates:
+            - Path=/user/**
       globalcors:
         cors-configurations:
           '[/**]':

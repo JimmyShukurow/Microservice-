@@ -22,6 +22,7 @@
     <modules>
         <module>ApiGateway</module>
         <module>smartir.website</module>
+        <module>Auth-Service</module>
     </modules>
 
 </project>
