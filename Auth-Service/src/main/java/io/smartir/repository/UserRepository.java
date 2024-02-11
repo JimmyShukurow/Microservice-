@@ -1,6 +1,6 @@
-package io.smartir;
+package io.smartir.repository;
 
-import org.springframework.data.domain.Example;
+import io.smartir.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

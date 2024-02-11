@@ -1,4 +1,4 @@
-package io.smartir;
+package io.smartir.helper;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.MappedSuperclass;

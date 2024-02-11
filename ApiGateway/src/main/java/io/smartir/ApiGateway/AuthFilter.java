@@ -10,6 +10,8 @@ public class AuthFilter implements GlobalFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
 
+
+
         System.out.println("here");
         return chain.filter(exchange);
     }
