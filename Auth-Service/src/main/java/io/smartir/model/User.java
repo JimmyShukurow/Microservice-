@@ -13,7 +13,7 @@ public class User {
     private long id;
     private String name;
     private String email;
-    private String token;
+//    private String token;
     private List<String> roles;
 
     public static User toUser(UserEntity entity) {

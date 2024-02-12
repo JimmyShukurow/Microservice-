@@ -1,5 +1,6 @@
 package io.smartir;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import io.smartir.entity.RoleEntity;
 import io.smartir.entity.TokenEntity;
 import io.smartir.entity.TokenTypes;
@@ -12,12 +13,16 @@ import io.smartir.repository.TokenRepository;
 import io.smartir.repository.UserRepository;
 import io.smartir.request.RegisterRequest;
 import io.smartir.request.UserRequest;
+import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -27,6 +32,8 @@ public class AuthService extends HelperFunctions {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final TokenRepository tokenRepository;
+
+
 
 
     public AuthService(UserRepository userRepository, RoleRepository roleRepository, TokenRepository tokenRepository) {
@@ -51,6 +58,9 @@ public class AuthService extends HelperFunctions {
     }
 
     public void assignNewRoleToUser(String id, String role) {
+
+//        checkUserPermissionToDoAction(id, request);
+
         var user = userRepository.findById(Long.valueOf(id));
         if (user.isEmpty()) throw new UserNotFoundException();
         var userEntity = user.get();
@@ -76,7 +86,6 @@ public class AuthService extends HelperFunctions {
         if (!user.get().getPassword().equals(hashPassword(request.getPassword()))) {
             throw new PasswordIsIncorrectException();
         }
-
         var token = generateJWToken(user.get().getName(), user.get().getEmail(), user.get().getRoles().stream().map(RoleEntity::getName).toList().toString());
         var tokenEntity = new TokenEntity();
         tokenEntity.setToken(token);
@@ -87,8 +96,35 @@ public class AuthService extends HelperFunctions {
     }
 
     public UserEntity getUser(String token) {
-        var tokenEntity =tokenRepository.findByToken(token);
-        if (tokenEntity.isEmpty() || tokenEntity.get().isExpired() || tokenEntity.get().isRevoked() ) throw new UserNotFoundException();
-        return tokenEntity.get().getUser();
+        try {
+            validateJWT(token);
+        } catch (ExpiredJwtException e) {
+            tokenRepository.findByToken(token).get().setExpired(true);
+            throw new YourTokenExpiredException();
+        } catch (Exception e) {
+            throw new WrongTokenException();
+        }
+
+        var tokenEntity = tokenRepository.findByToken(token);
+        if (tokenEntity.isEmpty() || tokenEntity.get().isExpired() || tokenEntity.get().isRevoked())
+            throw new UserNotFoundException();
+        var user = tokenEntity.get().getUser();
+        return user;
+    }
+
+    public void checkUserPermissionToDoAction(String id, HttpServletRequest request) {
+        var header = request.getHeader("Authorization");
+
+        var tokenEntity = tokenRepository.findByToken(header.split(" ")[1]);
+        if (!(tokenEntity.get().getUser().getId() == Long.parseLong(id))) throw new UserHasNotPermission();
+    }
+
+    public void logout(HttpServletRequest request) {
+        var header = request.getHeader("Authorization");
+        var token = tokenRepository.findByToken(header.split(" ")[1]);
+        if (token.isEmpty()) throw new WrongTokenException();
+        var entity = token.get();
+        entity.setRevoked(true);
+        tokenRepository.save(entity);
     }
 }

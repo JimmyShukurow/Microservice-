@@ -84,15 +84,10 @@ public class HelperFunctions {
     public Jws<Claims> validateJWT(String jwtString) {
         Key hmacKey = new SecretKeySpec(Base64.getDecoder().decode(secret),
                 SignatureAlgorithm.HS256.getJcaName());
-        try {
             Jws<Claims> jwt = Jwts.parserBuilder()
                     .setSigningKey(hmacKey)
                     .build()
                     .parseClaimsJws(jwtString);
             return jwt;
-        } catch (ExpiredJwtException e) {
-            throw new YourTokenExpiredException();
-        }
     }
-
 }

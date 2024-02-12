@@ -16,3 +16,7 @@ spring:
             allowedOrigins: "*"
             allowedMethods: "*"
             allowedHeaders: "*"
+
+  auth:
+    service:
+      uri: http://localhost:8082

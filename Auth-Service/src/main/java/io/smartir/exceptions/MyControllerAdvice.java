@@ -42,4 +42,13 @@ public class MyControllerAdvice {
     public ResponseEntity<String> tokenExpired(YourTokenExpiredException yourTokenExpiredException) {
         return new ResponseEntity<String>("Your session is expired!", HttpStatus.UNAUTHORIZED);
     }
+
+    @ExceptionHandler(WrongTokenException.class)
+    public ResponseEntity<String> wrongToken(WrongTokenException yourTokenExpiredException) {
+        return new ResponseEntity<String>("Wrong Token!", HttpStatus.UNAUTHORIZED);
+    }
+    @ExceptionHandler(UserHasNotPermission.class)
+    public ResponseEntity<String> wrongIds(UserHasNotPermission userHasNotPermission) {
+        return new ResponseEntity<String>("You don't have permission to do this!!", HttpStatus.UNAUTHORIZED);
+    }
 }

@@ -1,11 +1,17 @@
 package io.smartir;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
 import io.smartir.entity.RoleEntity;
+import io.smartir.exceptions.YourTokenExpiredException;
 import io.smartir.model.Role;
 import io.smartir.model.Token;
 import io.smartir.model.User;
 import io.smartir.request.RegisterRequest;
 import io.smartir.request.UserRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
@@ -33,13 +39,18 @@ public class AuthController {
 
     @PostMapping("login")
     public ResponseEntity<Token> login(@RequestBody UserRequest request) {
-
         return ResponseEntity.ok(authService.login(request));
+    }
+
+    @PostMapping("logout")
+    public ResponseEntity<String> logout(HttpServletRequest request) {
+
+        authService.logout(request);
+        return ResponseEntity.ok("You have been logged out.");
     }
 
     @PutMapping("{id}/assign-role/{role}")
     public ResponseEntity<String> assignNewRoleToUser(@PathVariable String id, @PathVariable String role) {
-
         authService.assignNewRoleToUser(id, role);
         return ResponseEntity.ok("User Roles are updated!");
     }
@@ -60,14 +71,16 @@ public class AuthController {
 
     @PostMapping("validate-JWT")
     public void validateToken(@Param("token") String token) {
-        var claims = authService.validateJWT(token);
-        System.out.println(claims);
+        try {
+            var claims = authService.validateJWT(token);
+        } catch (ExpiredJwtException e) {
+            throw new YourTokenExpiredException();
+        }
     }
 
     @GetMapping("get-user")
     public ResponseEntity<User> gertUser(@Param("token") String token) {
-
-        return ResponseEntity.ok(User.toUser(authService.getUser(token)));
-
+        var user = authService.getUser(token);
+        return ResponseEntity.ok(User.toUser(user));
     }
 }
