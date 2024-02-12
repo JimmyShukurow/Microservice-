@@ -79,8 +79,16 @@ public class AuthFilter implements GlobalFilter, Ordered {
     }
 
     public boolean permitWithAnyRole(ServerWebExchange exchange, ApiResponse user) {
-        return !user.getRoles().isEmpty() &&
-                exchange.getRequest().getPath().toString().equals("/user/logout");
+        return !user.getRoles().isEmpty() && (
+                exchange.getRequest().getPath().toString().equals("/user/logout") ||
+                exchange.getRequest().getPath().toString().contains("/article/") ||
+                exchange.getRequest().getPath().toString().contains("/tag/") ||
+                exchange.getRequest().getPath().toString().contains("/type/") ||
+                exchange.getRequest().getPath().toString().contains("/BannerImage/") ||
+                exchange.getRequest().getPath().toString().contains("/Image/")
+
+
+        );
     }
     private static boolean matchesEndpoint(String inputString, String endpointPattern) {
         Pattern pattern = Pattern.compile(endpointPattern);
