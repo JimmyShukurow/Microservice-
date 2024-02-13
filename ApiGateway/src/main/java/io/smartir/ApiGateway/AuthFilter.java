@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
-import org.springframework.http.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ServerWebExchange;
@@ -13,9 +13,6 @@ import reactor.core.publisher.Mono;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,6 +25,7 @@ public class AuthFilter implements GlobalFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
 
+//        System.out.println(exchange.getRequest().getPath());
         if (permitAll(exchange)) return chain.filter(exchange);
 
         String token = null;
@@ -47,8 +45,6 @@ public class AuthFilter implements GlobalFilter, Ordered {
         return exchange.getResponse().setComplete();
     }
 
-
-
     @Override
     public int getOrder() {
         return Ordered.HIGHEST_PRECEDENCE;
@@ -65,6 +61,14 @@ public class AuthFilter implements GlobalFilter, Ordered {
             log.info("URI syntax error!");
             throw new WrongTokenException();
         }
+    }
+
+    private static boolean matchesEndpoint(String inputString, String endpointPattern) {
+        Pattern pattern = Pattern.compile(endpointPattern);
+
+        Matcher matcher = pattern.matcher(inputString);
+
+        return matcher.matches();
     }
 
     public boolean permitAll(ServerWebExchange exchange) {
@@ -86,16 +90,8 @@ public class AuthFilter implements GlobalFilter, Ordered {
                 exchange.getRequest().getPath().toString().contains("/type/") ||
                 exchange.getRequest().getPath().toString().contains("/BannerImage/") ||
                 exchange.getRequest().getPath().toString().contains("/Image/")
-
-
         );
     }
-    private static boolean matchesEndpoint(String inputString, String endpointPattern) {
-        Pattern pattern = Pattern.compile(endpointPattern);
 
-        Matcher matcher = pattern.matcher(inputString);
-
-        return matcher.matches();
-    }
 
 }
