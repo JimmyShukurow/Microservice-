@@ -25,7 +25,7 @@ public class AuthFilter implements GlobalFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
 
-//        System.out.println(exchange.getRequest().getPath());
+        log.info(exchange.getRequest().getPath().toString());
         if (permitAll(exchange)) return chain.filter(exchange);
 
         String token = null;
@@ -79,7 +79,10 @@ public class AuthFilter implements GlobalFilter, Ordered {
 
     public boolean permitAdmin(ServerWebExchange exchange, ApiResponse user) {
         return (user.getRoles().stream().anyMatch(role -> role.equals(Roles.ADMIN.toString()))) &&
-                matchesEndpoint(exchange.getRequest().getPath().toString(), "^/user/[0-9]+/assign-role/[a-zA-Z]+$");
+                (
+                        matchesEndpoint(exchange.getRequest().getPath().toString(), "^/user/[0-9]+/assign-role/[a-zA-Z]+$") ||
+                                exchange.getRequest().getPath().toString().equals("/user/get-all")
+                );
     }
 
     public boolean permitWithAnyRole(ServerWebExchange exchange, ApiResponse user) {

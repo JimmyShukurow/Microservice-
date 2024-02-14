@@ -127,4 +127,8 @@ public class AuthService extends HelperFunctions {
         entity.setRevoked(true);
         tokenRepository.save(entity);
     }
+
+    public List<UserEntity> getAllUsers() {
+        return userRepository.findAll();
+    }
 }

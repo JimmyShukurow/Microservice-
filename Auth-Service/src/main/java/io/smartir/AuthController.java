@@ -83,4 +83,10 @@ public class AuthController {
         var user = authService.getUser(token);
         return ResponseEntity.ok(User.toUser(user));
     }
+
+    @GetMapping("get-all")
+    public ResponseEntity<List<User>> getAllUsers() {
+        var users = authService.getAllUsers();
+        return ResponseEntity.ok().body(users.stream().map(User::toUser).toList());
+    }
 }
