@@ -1,5 +1,6 @@
 package io.smartir.smartir.website.entity;
 
+import io.smartir.smartir.website.helper.TimeIntegration;
 import io.smartir.smartir.website.model.ArticleContentsModel;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -10,7 +11,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-public class Article {
+public class Article extends TimeIntegration {
 
     @Id
     @SequenceGenerator( name = "article_sequence", sequenceName = "article_sequence", allocationSize = 1)

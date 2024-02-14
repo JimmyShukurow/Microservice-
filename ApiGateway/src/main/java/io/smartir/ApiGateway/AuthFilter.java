@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -81,12 +82,13 @@ public class AuthFilter implements GlobalFilter, Ordered {
         return (user.getRoles().stream().anyMatch(role -> role.equals(Roles.ADMIN.toString()))) &&
                 (
                         matchesEndpoint(exchange.getRequest().getPath().toString(), "^/user/[0-9]+/assign-role/[a-zA-Z]+$") ||
+                                exchange.getRequest().getMethod().equals(HttpMethod.DELETE) ||
                                 exchange.getRequest().getPath().toString().equals("/user/get-all")
                 );
     }
 
     public boolean permitWithAnyRole(ServerWebExchange exchange, ApiResponse user) {
-        return !user.getRoles().isEmpty() && (
+        return !user.getRoles().isEmpty() && !exchange.getRequest().getMethod().equals(HttpMethod.DELETE) && (
                 exchange.getRequest().getPath().toString().equals("/user/logout") ||
                 exchange.getRequest().getPath().toString().contains("/article/") ||
                 exchange.getRequest().getPath().toString().contains("/tag/") ||

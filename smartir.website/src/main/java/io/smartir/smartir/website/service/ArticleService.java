@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.Path;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -32,23 +33,23 @@ public class ArticleService {
         this.tagRepository = tagRepository;
     }
 
-    public String addArticle(MultipartFile imageFile, String title, MultipartFile bannerImageFile, List<ArticleContentsModel> articleContentsModel, List<Integer> tagIDs,String summary) throws Exception {
-       Optional<Article> articleCheck=articleRepository.findByTitleContainsAllIgnoreCase(title);
-       if (articleCheck.isEmpty()){
-           Path imagePath=fileService.moveImgFile(imageFile);
-           Path bannerImagePath=fileService.moveBannerImageFile(bannerImageFile);
-           List<Tag> tags = getTags(tagIDs);
-           Article article=new Article();
-           article.setImage(imagePath.toString());
-           article.setBannerImage(bannerImagePath.toString());
-           article.setTitle(title);
-           article.setContents(articleContentsModel);
-           article.setSummary(summary);
-           article.setTags(tags);
-           articleRepository.save(article);
-           return "Article added";
-       }else
-           return "This article already exist";
+    public String addArticle(MultipartFile imageFile, String title, MultipartFile bannerImageFile, List<ArticleContentsModel> articleContentsModel, List<Integer> tagIDs, String summary) throws Exception {
+        Optional<Article> articleCheck = articleRepository.findByTitleContainsAllIgnoreCase(title);
+        if (articleCheck.isEmpty()) {
+            Path imagePath = fileService.moveImgFile(imageFile);
+            Path bannerImagePath = fileService.moveBannerImageFile(bannerImageFile);
+            List<Tag> tags = getTags(tagIDs);
+            Article article = new Article();
+            article.setImage(imagePath.toString());
+            article.setBannerImage(bannerImagePath.toString());
+            article.setTitle(title);
+            article.setContents(articleContentsModel);
+            article.setSummary(summary);
+            article.setTags(tags);
+            articleRepository.save(article);
+            return "Article added";
+        } else
+            return "This article already exist";
     }
 
     public String updateArticle(int id, MultipartFile imageFile, String title, MultipartFile bannerImageFile,
@@ -57,9 +58,9 @@ public class ArticleService {
 
         if (oldArticleOptional.isPresent()) {
             Article oldArticle = oldArticleOptional.get();
-            Optional<Article> articleCheck=articleRepository.findByTitleContainsAllIgnoreCase(title);
+            Optional<Article> articleCheck = articleRepository.findByTitleContainsAllIgnoreCase(title);
             // Check if the new title is unique if changed
-            if (articleCheck.isPresent()&&articleCheck.get().getId()!=id) {
+            if (articleCheck.isPresent() && articleCheck.get().getId() != id) {
                 return "Another article with the same title exists. Update failed.";
             }
 
@@ -89,10 +90,9 @@ public class ArticleService {
     }
 
 
-
-
     public Page<Article> getArticles(Collection<Integer> tagID, String q, Pageable pageable) {
         List<Article> articles = articleRepository.findAll();
+        articles = articles.stream().filter(article -> article.deletedAt == null).collect(Collectors.toList());
         List<Article> articleResults = new ArrayList<>();
         List<Article> filteredArticles;
 
@@ -127,12 +127,14 @@ public class ArticleService {
     }
 
 
-    public String deleteArticle(int id){
-        Optional<Article> article= articleRepository.findById(id);
-        if (article.isPresent()){
-            articleRepository.deleteById(id);
+    public String deleteArticle(int id) {
+        Optional<Article> article = articleRepository.findById(id);
+        if (article.isPresent()) {
+            var articleEntity = article.get();
+            articleEntity.setDeletedAt(OffsetDateTime.now());
+            articleRepository.save(articleEntity);
             return "Article Deleted";
-        }else {
+        } else {
             return "Article not found";
         }
     }
