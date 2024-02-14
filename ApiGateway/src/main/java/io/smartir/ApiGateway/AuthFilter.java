@@ -76,7 +76,9 @@ public class AuthFilter implements GlobalFilter, Ordered {
         return exchange.getRequest().getPath().toString().equals("/user/register") ||
                 exchange.getRequest().getPath().toString().equals("/user/login") ||
                 exchange.getRequest().getPath().toString().equals("/user/validate-JWT") ||
-                exchange.getRequest().getPath().toString().equals("/article/get-all");
+                exchange.getRequest().getPath().toString().equals("/article/get-all") ||
+                exchange.getRequest().getPath().toString().startsWith("/BannerImage/") ||
+                exchange.getRequest().getPath().toString().startsWith("/Image/");
     }
 
     public boolean permitAdmin(ServerWebExchange exchange, ApiResponse user) {
