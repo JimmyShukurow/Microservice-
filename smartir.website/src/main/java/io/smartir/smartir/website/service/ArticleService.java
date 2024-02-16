@@ -2,11 +2,14 @@ package io.smartir.smartir.website.service;
 
 import io.smartir.smartir.website.entity.Article;
 import io.smartir.smartir.website.entity.Tag;
+import io.smartir.smartir.website.helper.HelperFunctions;
 import io.smartir.smartir.website.model.ArticleContentsModel;
+import io.smartir.smartir.website.requests.ArticleFilterRequest;
 import io.smartir.smartir.website.repository.ArticleRepository;
 import io.smartir.smartir.website.repository.TagRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,14 +17,13 @@ import org.springframework.web.multipart.MultipartFile;
 import java.nio.file.Path;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Service
-public class ArticleService {
+public class ArticleService extends HelperFunctions {
 
     private final FileService fileService;
     private final ArticleRepository articleRepository;
@@ -90,40 +92,14 @@ public class ArticleService {
     }
 
 
-    public Page<Article> getArticles(Collection<Integer> tagID, String q, Pageable pageable) {
-        List<Article> articles = articleRepository.findAll();
-        articles = articles.stream().filter(article -> article.deletedAt == null).collect(Collectors.toList());
-        List<Article> articleResults = new ArrayList<>();
-        List<Article> filteredArticles;
+    public Page<Article> getArticles(ArticleFilterRequest request) {
+        Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
+        var articles = articleRepository.findAll(); // getting all result (deleted and not deleted)
+        articles = articles.stream().filter(article -> article.deletedAt == null).toList(); //filtering NON deleted results here
+        articles = filterByTag(articles, request);
+        articles = filterBySearch(articles, request.getSearch());
 
-        for (Article article : articles) {
-            Article newArticle = new Article();
-            if (tagFilter(tagID, article)) {
-                newArticle.setId(article.getId());
-                newArticle.setTitle(article.getTitle());
-                newArticle.setImage(article.getImage());
-                newArticle.setBannerImage(article.getBannerImage());
-                newArticle.setTags(article.getTags());
-                newArticle.setContents(article.getContents());
-                newArticle.setSummary(article.getSummary());
-                articleResults.add(newArticle);
-            }
-        }
-
-        if (!q.isEmpty()) {
-            Predicate<Article> containsName = article ->
-                    article.getTitle().toLowerCase().contains(q.toLowerCase());
-            Predicate<Article> containsSummary = article ->
-                    article.getSummary() != null && article.getSummary().toLowerCase().contains(q.toLowerCase());
-            filteredArticles = articleResults.stream()
-                    .filter(containsName.or(containsSummary))
-                    .collect(Collectors.toList());
-            return new PageImpl<>(filteredArticles, pageable, filteredArticles.size());
-        } else if (!tagID.isEmpty()) {
-            return new PageImpl<>(articleResults, pageable, articleResults.size());
-        } else {
-            return new PageImpl<>(articles, pageable, articles.size());
-        }
+        return (Page<Article>) makingPagination(articles, pageable);
     }
 
 
@@ -141,24 +117,38 @@ public class ArticleService {
 
     private List<Tag> getTags(List<Integer> tagIds) throws Exception {
         List<Tag> existingTags = tagRepository.findByIdIn(tagIds);
-
         for (Integer tagId : tagIds) {
             boolean tagExists = existingTags.stream().anyMatch(tag -> tag.getId() == tagId);
             if (!tagExists) {
                 throw new Exception("Invalid tag ID: " + tagId);
             }
         }
-
         return existingTags;
     }
 
-    public boolean tagFilter(Collection<Integer> ids, Article article) {
-        if (!ids.isEmpty()) {
-            return article.getTags().stream()
-                    .map(Tag::getId)
-                    .anyMatch(ids::contains);
-        }
-        return true;
+    public List<Article> filterByTag(List<Article> articles, ArticleFilterRequest request) {
+
+        if (!request.getTagID().isEmpty())
+            return articles.stream().filter(
+                    article -> article.getTags().stream().anyMatch(
+                            tag -> request.getTagID().contains(tag.getId())
+                    )).toList();
+        return articles;
     }
+
+    public List<Article> filterBySearch(List<Article> articles, String search) {
+        if (!search.isEmpty() && !search.isBlank()) {
+            Predicate<Article> containsName = article ->
+                    article.getTitle().toLowerCase().contains(search.toLowerCase());
+            Predicate<Article> containsSummary = article ->
+                    article.getSummary() != null && article.getSummary().toLowerCase().contains(search.toLowerCase());
+            return articles.stream()
+                    .filter(containsName.or(containsSummary))
+                    .collect(Collectors.toList());
+        }
+        return articles;
+    }
+
+
 }
 

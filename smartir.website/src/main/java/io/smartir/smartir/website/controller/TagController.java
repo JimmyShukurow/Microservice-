@@ -1,7 +1,7 @@
 package io.smartir.smartir.website.controller;
 
 import io.smartir.smartir.website.entity.Tag;
-import io.smartir.smartir.website.model.TagRequest;
+import io.smartir.smartir.website.requests.TagRequest;
 import io.smartir.smartir.website.service.TagService;
 import org.springframework.web.bind.annotation.*;
 

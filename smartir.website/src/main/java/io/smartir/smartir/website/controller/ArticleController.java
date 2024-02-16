@@ -1,12 +1,10 @@
 package io.smartir.smartir.website.controller;
 
-import io.smartir.smartir.website.entity.Article;
+import io.smartir.smartir.website.model.Article;
 import io.smartir.smartir.website.model.ArticleContentsModel;
-import io.smartir.smartir.website.model.ArticleFilterRequest;
+import io.smartir.smartir.website.requests.ArticleFilterRequest;
 import io.smartir.smartir.website.service.ArticleService;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -46,10 +44,9 @@ public class ArticleController {
     }
 
     @PostMapping(value = "get-all")
-    public ResponseEntity<Page<Article>>  getArticles(@RequestBody ArticleFilterRequest articleFilterRequest){
-        Pageable pageable = PageRequest.of(articleFilterRequest.getPage(), articleFilterRequest.getSize());
-        var result=articleService.getArticles(articleFilterRequest.getTagID(),articleFilterRequest.getSearch(),pageable);
-        return ResponseEntity.ok(result);
+    public ResponseEntity<Article>  getArticles(@RequestBody ArticleFilterRequest articleFilterRequest){
+        var result=articleService.getArticles(articleFilterRequest);
+        return ResponseEntity.ok(Article.toArticle(result));
     }
 
     @DeleteMapping(value = "delete/{articleId}")

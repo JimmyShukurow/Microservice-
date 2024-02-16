@@ -1,4 +1,4 @@
-package io.smartir.smartir.website.model;
+package io.smartir.smartir.website.requests;
 
 import io.smartir.smartir.website.entity.Type;
 import lombok.*;
