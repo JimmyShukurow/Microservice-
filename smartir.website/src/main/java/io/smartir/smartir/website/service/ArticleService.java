@@ -99,7 +99,7 @@ public class ArticleService extends HelperFunctions {
         articles = filterByTag(articles, request);
         articles = filterBySearch(articles, request.getSearch());
 
-        return (Page<Article>) makingPagination(articles, pageable);
+        return makingPagination(articles, pageable);
     }
 
 
