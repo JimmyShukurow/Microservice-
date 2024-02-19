@@ -1,6 +1,5 @@
 package io.smartir.smartir.website.model;
 
-import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.domain.Page;
@@ -37,7 +36,7 @@ class ArticleItem {
     private String image;
     private String summary;
     private List<ArticleContentsModel> contents;
-    private List<Tag> tags;
+    private List<TagItem> tagItems;
     public static ArticleItem toArticleItem(io.smartir.smartir.website.entity.Article article) {
         ArticleItem articleItem = new ArticleItem();
         articleItem.setId(article.getId());
@@ -46,7 +45,7 @@ class ArticleItem {
         articleItem.setImage(article.getImage());
         articleItem.setSummary(article.getSummary());
         articleItem.setContents(article.getContents());
-        articleItem.setTags(article.getTags().stream().map(Tag::toTag).toList());
+        articleItem.setTagItems(article.getTags().stream().map(TagItem::toTag).toList());
         return articleItem;
     }
 }

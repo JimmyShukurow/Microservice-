@@ -1,15 +1,19 @@
 package io.smartir.smartir.website.service;
 
 import io.smartir.smartir.website.entity.Tag;
+import io.smartir.smartir.website.helper.HelperFunctions;
 import io.smartir.smartir.website.requests.TagRequest;
 import io.smartir.smartir.website.repository.TagRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class TagService {
+public class TagService extends HelperFunctions {
 
     private final TagRepository tagRepository;
 
@@ -30,7 +34,9 @@ public class TagService {
         }
     }
 
-    public List<Tag> getTags() {
-        return tagRepository.findAll();
+    public Page<Tag> getTags(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        var tags = tagRepository.findAll();
+        return makingPagination(tags, pageable);
     }
 }

@@ -14,10 +14,10 @@ public class HelperFunctions {
         }
         if ((pageable.getOffset() <= givenList.size()) && (pageable.getOffset() + pageable.getPageSize() > givenList.size())) {
             var size = givenList.size();
-            var articleSubList = givenList.subList((int) pageable.getOffset(), size);
-            return new PageImpl<>(articleSubList, pageable, givenList.size());
+            var givenSubList = givenList.subList((int) pageable.getOffset(), size);
+            return new PageImpl<>(givenSubList, pageable, givenList.size());
         }
-        var articlesSubList = givenList.subList((int) pageable.getOffset(), (int) (pageable.getOffset() + pageable.getPageSize()));
-        return new PageImpl<>(articlesSubList, pageable, givenList.size());
+        var givenSubList = givenList.subList((int) pageable.getOffset(), (int) (pageable.getOffset() + pageable.getPageSize()));
+        return new PageImpl<>(givenSubList, pageable, givenList.size());
     }
 }

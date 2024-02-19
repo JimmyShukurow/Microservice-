@@ -51,4 +51,8 @@ public class MyControllerAdvice {
     public ResponseEntity<String> wrongIds(UserHasNotPermission userHasNotPermission) {
         return new ResponseEntity<String>("You don't have permission to do this!!", HttpStatus.UNAUTHORIZED);
     }
+    @ExceptionHandler(EmailIsNotCorrectException.class)
+    public ResponseEntity<String> wrongEmail(EmailIsNotCorrectException emailIsNotCorrectException) {
+        return new ResponseEntity<String>("Wrong Email!", HttpStatus.UNAUTHORIZED);
+    }
 }

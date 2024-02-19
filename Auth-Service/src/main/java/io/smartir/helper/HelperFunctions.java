@@ -49,6 +49,11 @@ public class HelperFunctions {
                 containsUpperCase(rawPassword); // check password has upper case letter
     }
 
+    public boolean checkEmailComplexity(String email) {
+        return email.contains("@");
+    }
+
+
     public boolean containsLowerCase(String value) {
         return contains(value, ch -> Character.isLetter(ch) && Character.isLowerCase(ch));
     }
@@ -90,4 +95,5 @@ public class HelperFunctions {
                     .parseClaimsJws(jwtString);
             return jwt;
     }
+
 }

@@ -3,8 +3,8 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-/Image/**
-/BannerImage/**
+**/Image/**
+**/BannerImage/**
 run_all_modules.sh
 ### STS ###
 .apt_generated

@@ -12,4 +12,6 @@ public class TagRequest {
 
     String name;
     Type type;
+    Integer page;
+    Integer size;
 }

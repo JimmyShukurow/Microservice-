@@ -47,6 +47,7 @@ public class AuthService extends HelperFunctions {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) throw new EmailIsAlreadyRegisteredException();
         if (!checkPasswordComplexity(request.getPassword())) throw new PasswordIsVerySimpleException();
         if (!request.getPassword().equals(request.getConfirmPassword())) throw new PasswordIsNotConfirmedException();
+        if (!checkEmailComplexity(request.getEmail())) throw new EmailIsNotCorrectException();
         var user = new UserEntity();
         user.setName(request.getName());
         user.setEmail(request.getEmail());
@@ -86,6 +87,8 @@ public class AuthService extends HelperFunctions {
         if (!user.get().getPassword().equals(hashPassword(request.getPassword()))) {
             throw new PasswordIsIncorrectException();
         }
+        if (!checkEmailComplexity(request.getEmail())) throw new EmailIsNotCorrectException();
+
         var token = generateJWToken(user.get().getName(), user.get().getEmail(), user.get().getRoles().stream().map(RoleEntity::getName).toList().toString());
         var tokenEntity = new TokenEntity();
         tokenEntity.setToken(token);

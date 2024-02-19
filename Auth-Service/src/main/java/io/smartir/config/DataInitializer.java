@@ -28,7 +28,7 @@ public class DataInitializer extends HelperFunctions implements ApplicationRunne
         if (userRepository.findByEmail("admin").isPresent() ) return;
         UserEntity admin = new UserEntity();
         admin.setName("admin");
-        admin.setEmail("admin");
+        admin.setEmail("admin@mail.com");
         admin.setPassword(hashPassword("admin"));
         admin.setRoles(Set.of(roleRepository.findByName("ADMIN").get()));
         admin.setCreatedAt(OffsetDateTime.now());
