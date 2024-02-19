@@ -25,7 +25,7 @@ public class TagController {
         return tagService.addTag(tagRequest);
     }
 
-    @GetMapping("get-all")
+    @PostMapping("get-all")
     public ResponseEntity<Tag> getTags(@RequestBody TagRequest request) {
         return ResponseEntity.ok(Tag.toTag(tagService.getTags(request.getPage(), request.getSize())));
     }

@@ -25,7 +25,7 @@ public class DataInitializer extends HelperFunctions implements ApplicationRunne
 //    Running this codes here because cant create user with hashed password in data.sql
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        if (userRepository.findByEmail("admin").isPresent() ) return;
+        if (userRepository.findByEmail("admin@mail.com").isPresent() ) return;
         UserEntity admin = new UserEntity();
         admin.setName("admin");
         admin.setEmail("admin@mail.com");
