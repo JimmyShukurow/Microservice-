@@ -1,9 +1,6 @@
 package io.smartir;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("mail")
@@ -24,5 +21,9 @@ public class MailController {
     @PostMapping("add-user")
     public void addUser(@RequestBody MailChimpRequest request) {
         mailService.addUserToMailChimp(request);
+    }
+    @GetMapping("status")
+    public String getStatus() {
+        return "Mail-service is working";
     }
 }
