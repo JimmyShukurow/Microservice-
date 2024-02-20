@@ -53,4 +53,8 @@ public class ArticleController {
     public String deleteArticle(@PathVariable int articleId){
        return articleService.deleteArticle(articleId);
     }
+    @GetMapping("status")
+    public String getStatus() {
+        return "Filter-service is working";
+    }
 }

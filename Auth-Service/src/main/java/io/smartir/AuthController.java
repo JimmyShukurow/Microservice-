@@ -89,4 +89,9 @@ public class AuthController {
         var users = authService.getAllUsers();
         return ResponseEntity.ok().body(users.stream().map(User::toUser).toList());
     }
+
+    @GetMapping("status")
+    public String getStatus() {
+        return "Auth-service is working";
+    }
 }
