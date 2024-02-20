@@ -80,6 +80,7 @@ public class AuthFilter implements GlobalFilter, Ordered {
                 exchange.getRequest().getPath().toString().equals("/tag/get-all") ||
                 exchange.getRequest().getPath().toString().equals("/mail/send-email") ||
                 exchange.getRequest().getPath().toString().equals("/mail/add-user") ||
+                exchange.getRequest().getPath().toString().endsWith("/status") ||
                 exchange.getRequest().getPath().toString().startsWith("/BannerImage/") ||
                 exchange.getRequest().getPath().toString().startsWith("/Image/");
     }

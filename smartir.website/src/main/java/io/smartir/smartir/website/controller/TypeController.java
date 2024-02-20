@@ -25,7 +25,10 @@ public class TypeController {
         return typeService.getTypes();
     }
 
-
+    @GetMapping("status")
+    public String getStatus() {
+        return "Filter-service is working";
+    }
 }
 
 

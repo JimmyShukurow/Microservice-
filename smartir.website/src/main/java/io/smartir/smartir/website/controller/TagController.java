@@ -29,6 +29,10 @@ public class TagController {
     public ResponseEntity<Tag> getTags(@RequestBody TagRequest request) {
         return ResponseEntity.ok(Tag.toTag(tagService.getTags(request.getPage(), request.getSize())));
     }
+    @GetMapping("status")
+    public String getStatus() {
+        return "Filter-service is working";
+    }
 }
 
 
