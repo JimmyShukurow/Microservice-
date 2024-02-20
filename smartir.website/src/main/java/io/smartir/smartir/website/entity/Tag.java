@@ -1,6 +1,7 @@
 package io.smartir.smartir.website.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.smartir.smartir.website.helper.TimeIntegration;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +11,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-public class Tag {
+public class Tag extends TimeIntegration {
 
     @Id
     @SequenceGenerator( name = "tag_sequence", sequenceName = "tag_sequence", allocationSize = 1)
