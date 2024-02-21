@@ -27,7 +27,8 @@ public class TagController {
 
     @PostMapping("get-all")
     public ResponseEntity<Tag> getTags(@RequestBody TagRequest request) {
-        return ResponseEntity.ok(Tag.toTag(tagService.getTags(request.getPage(), request.getSize())));
+        var result = tagService.getTags(request);
+        return ResponseEntity.ok(Tag.toTag(result));
     }
     @GetMapping("status")
     public String getStatus() {

@@ -34,9 +34,10 @@ public class TagService extends HelperFunctions {
         }
     }
 
-    public Page<Tag> getTags(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+    public Page<Tag> getTags(TagRequest request) {
+        Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
         var tags = tagRepository.findAll();
+        System.out.println(tags.size());
         return makingPagination(tags, pageable);
     }
 }

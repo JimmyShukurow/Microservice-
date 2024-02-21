@@ -21,7 +21,7 @@ public class Tag{
         tag.setCurrentPage(tagPage.getNumber());
         tag.setTotalArticles((int)tagPage.getTotalElements());
         tag.setSize(tagPage.getSize());
-        tag.setTotalPages(tag.getTotalPages());
+        tag.setTotalPages(tagPage.getTotalPages());
         return tag;
     }
 }
