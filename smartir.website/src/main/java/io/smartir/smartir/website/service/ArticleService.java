@@ -2,6 +2,7 @@ package io.smartir.smartir.website.service;
 
 import io.smartir.smartir.website.entity.Article;
 import io.smartir.smartir.website.entity.Tag;
+import io.smartir.smartir.website.exceptions.ArticleWithThisTitleExistsException;
 import io.smartir.smartir.website.helper.HelperFunctions;
 import io.smartir.smartir.website.model.ArticleContentsModel;
 import io.smartir.smartir.website.requests.ArticleFilterRequest;
@@ -37,21 +38,24 @@ public class ArticleService extends HelperFunctions {
 
     public String addArticle(MultipartFile imageFile, String title, MultipartFile bannerImageFile, List<ArticleContentsModel> articleContentsModel, List<Integer> tagIDs, String summary) throws Exception {
         Optional<Article> articleCheck = articleRepository.findByTitleContainsAllIgnoreCase(title);
-        if (articleCheck.isEmpty()) {
-            Path imagePath = fileService.moveImgFile(imageFile);
-            Path bannerImagePath = fileService.moveBannerImageFile(bannerImageFile);
-            List<Tag> tags = getTags(tagIDs);
-            Article article = new Article();
-            article.setImage(imagePath.toString());
-            article.setBannerImage(bannerImagePath.toString());
-            article.setTitle(title);
-            article.setContents(articleContentsModel);
-            article.setSummary(summary);
-            article.setTags(tags);
-            articleRepository.save(article);
-            return "Article added";
-        } else
-            return "This article already exist";
+
+        if (articleCheck.isPresent()) throw new ArticleWithThisTitleExistsException();
+
+        Path imagePath = fileService.moveImgFile(imageFile);
+        Path bannerImagePath = fileService.moveBannerImageFile(bannerImageFile);
+
+        List<Tag> tags = getTags(tagIDs);
+        Article article = new Article();
+        article.setImage(imagePath.toString());
+        article.setBannerImage(bannerImagePath.toString());
+        article.setTitle(title);
+        article.setContents(articleContentsModel);
+        article.setSummary(summary);
+        article.setTags(tags);
+        articleRepository.save(article);
+
+        return "Article added";
+
     }
 
     public String updateArticle(int id, MultipartFile imageFile, String title, MultipartFile bannerImageFile,
