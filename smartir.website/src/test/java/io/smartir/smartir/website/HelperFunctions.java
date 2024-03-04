@@ -61,7 +61,7 @@ public class HelperFunctions {
     public MultipartFile createTestImage() {
         try {
 
-            byte[] imageBytes = Files.readAllBytes(Path.of("test.jpg"));
+            byte[] imageBytes = Files.readAllBytes(Path.of("src/test/resources/test.jpg"));
 
             MockMultipartFile file = new MockMultipartFile(
                     "image",
@@ -71,7 +71,7 @@ public class HelperFunctions {
             );
             return file;
         } catch (IOException e) {
-            return null;
+            throw new RuntimeException("image is not found");
         }
     }
 }

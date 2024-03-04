@@ -154,5 +154,8 @@ public class ArticleService extends HelperFunctions {
     }
 
 
+    public List<Article> getAllArticles() {
+        return articleRepository.findAll();
+    }
 }
 
