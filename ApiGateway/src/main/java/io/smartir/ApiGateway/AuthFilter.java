@@ -77,6 +77,7 @@ public class AuthFilter implements GlobalFilter, Ordered {
                 exchange.getRequest().getPath().toString().equals("/user/login") ||
                 exchange.getRequest().getPath().toString().equals("/user/validate-JWT") ||
                 exchange.getRequest().getPath().toString().equals("/article/get-all") ||
+                exchange.getRequest().getPath().toString().equals("/article/get-all-articles") ||
                 exchange.getRequest().getPath().toString().equals("/tag/get-all-tags") ||
                 exchange.getRequest().getPath().toString().equals("/mail/send-email") ||
                 exchange.getRequest().getPath().toString().equals("/mail/add-user") ||

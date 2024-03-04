@@ -2,9 +2,9 @@ package io.smartir.smartir.website.controller;
 
 import io.smartir.smartir.website.model.Article;
 import io.smartir.smartir.website.model.ArticleContentsModel;
+import io.smartir.smartir.website.model.ArticleItem;
 import io.smartir.smartir.website.requests.ArticleFilterRequest;
 import io.smartir.smartir.website.service.ArticleService;
-import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -47,6 +47,12 @@ public class ArticleController {
     public ResponseEntity<Article>  getArticles(@RequestBody ArticleFilterRequest articleFilterRequest){
         var result=articleService.getArticles(articleFilterRequest);
         return ResponseEntity.ok(Article.toArticle(result));
+    }
+
+    @GetMapping(value = "get-all-articles")
+    public ResponseEntity<List<ArticleItem>>  getAllArticles(){
+        var result=articleService.getAllArticles();
+        return ResponseEntity.ok(result.stream().map(ArticleItem::toArticleItem).toList());
     }
 
     @DeleteMapping(value = "delete/{articleId}")

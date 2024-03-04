@@ -27,4 +27,12 @@ public class Tag extends TimeIntegration {
     @ManyToOne
     @JoinColumn(name="typeId",referencedColumnName = "id")
     private Type type;
+
+    @Override
+    public String toString() {
+        return "Tag{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }
