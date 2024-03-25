@@ -5,7 +5,7 @@ spring:
         - id: website-service
           uri: http://localhost:8081
           predicates:
-            - Path=/article/**, /tag/**, /type/**, /BannerImage/**,/Image/**
+            - Path=/article/**, /tag/**, /type/**, /BannerImage/**,/Image/**,/feedback/**
         - id: auth-service
           uri: http://localhost:8082
           predicates:
