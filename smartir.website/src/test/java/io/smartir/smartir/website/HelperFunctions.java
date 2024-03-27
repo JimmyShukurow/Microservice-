@@ -1,6 +1,5 @@
 package io.smartir.smartir.website;
 
-import com.fasterxml.jackson.databind.util.NativeImageUtil;
 import io.smartir.smartir.website.entity.Article;
 import io.smartir.smartir.website.entity.Tag;
 import io.smartir.smartir.website.entity.Type;
@@ -9,10 +8,6 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -56,6 +51,14 @@ public class HelperFunctions {
             tags.add(tag);
         });
         return tags;
+    }
+
+    public List<Article> createManyArticles() {
+        List<Article> articles = new ArrayList<>();
+        List<Tag> tags = createManyTags(List.of("tag1", "tag2", "tag3"), new Type());
+        List.of("article1", "article2", "artcile3").forEach(el->{
+            articles.add(articleCreator(tags, el));});
+        return articles;
     }
 
     public MultipartFile createTestImage() {
