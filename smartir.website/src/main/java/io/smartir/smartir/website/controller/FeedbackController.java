@@ -2,10 +2,7 @@ package io.smartir.smartir.website.controller;
 
 import io.smartir.smartir.website.requests.FeedbackRequest;
 import io.smartir.smartir.website.service.FeedbackService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,7 +17,8 @@ public class FeedbackController {
     }
 
     @PostMapping("add-feedback")
-    public String addFeedback(FeedbackRequest request) {
+    public String addFeedback(@RequestBody FeedbackRequest request) {
+        System.out.println(request);
         return feedbackService.addFeedback(request);
     }
 

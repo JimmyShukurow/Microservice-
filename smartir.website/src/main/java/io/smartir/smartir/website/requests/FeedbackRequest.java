@@ -10,9 +10,8 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 public class FeedbackRequest {
-
-    String email;
+     String email;
 
     @Column(columnDefinition = "TEXT")
-    String feedback;
+     String feedback;
 }
